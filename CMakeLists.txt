@@ -18,6 +18,7 @@ qt_add_qml_module(apptimelinetest
     QML_FILES Main.qml
     QML_FILES KeyframeDelegate.qml
     QML_FILES TimelineDisplay.qml
+    QML_FILES KeyframeListView.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

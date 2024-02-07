@@ -76,12 +76,17 @@ ApplicationWindow {
         visible: ssAnimation.running || timeLineFrame.value>0
     }
 
-    function dumpKeyframes(k) {
-        for (let i=0;i<k.keyframes.length;i++) {
-            console.debug("***KEYFRAME: "+k.keyframes[i].frame+" : "+k.keyframes[i].value)
+    function dumpKeyframes(kg) {
+        for (let i=0;i<kg.keyframes.length;i++) {
+            console.debug("***KEYFRAME", kg.keyframes[i].frame, kg.keyframes[i].value)
         }
     }
 
+    Component {
+        id: kfc
+        Keyframe {}
+    }
+    
     Timeline {
         id: tl
         startFrame: 0
@@ -89,9 +94,28 @@ ApplicationWindow {
         enabled: lvEnabled.checked
 
         property int currentFrameFixed: currentFrame
-
         property var index: []
+        property bool isReady: false
+        
+        function addKeyframe(kfg, frame, value) {
+            keyframeGroups[kfg].keyframes.push(kf)
+        }
+        
+        function addKeyframeToGroup(kg, f, v) {
+            console.debug("Frame: "+f+" == "+v)
+            kg.keyframes.push(kfc.createObject(tl, { frame: f, value: v }))
+        }
 
+        function updateKeyframeIngroup(kg, f, v) {
+            for (let i=0;i<kg.keyframes.length;i++) {
+                if (kg.keyframes[i].frame===f) {
+                    kg.keyframes[i].value=v;
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         keyframeGroups: [
             KeyframeGroup {
                 id: kfg1
@@ -141,27 +165,23 @@ ApplicationWindow {
         }
 
         function updateIndexes() {
+            isReady=false;
             prepareIndex();
             updateIndex(kfg1, 0);
             updateIndex(kfg2, 1);
             updateIndex(kfg3, 2);
+            isReady=true;
         }
 
         function clear() {
             kfg1.keyframes=[]
             kfg2.keyframes=[]
             kfg3.keyframes=[]
-            prepareIndex()
-            updateIndex(kfg1, 0);
-            updateIndex(kfg2, 1);
-            updateIndex(kfg3, 2);
-            tl.endFrame=0
-            tl.endFrame=60
+            updateIndexes();
         }
 
         Component.onCompleted: {            
             updateIndexes();
-            // index.forEach(e => { console.debug(e)} )
         }
 
         animations: [
@@ -188,6 +208,8 @@ ApplicationWindow {
             tl: tl
             Layout.fillWidth: true
             Layout.fillHeight: false
+            
+            timeLineHeight: zoomHeightSlider.value
 
             onKeyframeClicked: {
                 //kf.text=cu

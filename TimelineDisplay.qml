@@ -7,10 +7,22 @@ Rectangle {
     id: timeLine
     property int pos: 1
     property Timeline tl;
-
+    property int timeLineHeight: 16
+    property int keyframes: 0
+    
     color: "black"
 
     signal keyframeClicked(int key, Keyframe keyframe)
+    
+    Component.onCompleted: {
+        
+    }
+    
+    Binding on keyframes {
+        delayed: true
+        value: tl.endFrame
+        when: tl.isReady
+    }
 
     Flickable {
         id: timeLineContainer
@@ -37,7 +49,7 @@ Rectangle {
             spacing: 1
             Rectangle {
                 Layout.fillWidth: true
-                height: 2
+                height: 1
                 color: "blue"
             }
             ListView {
@@ -65,35 +77,29 @@ Rectangle {
                 height: 1
                 color: "blue"
             }
-            ListView {
+            KeyframeListView {
                 id: tl1
-                property int key: 0
-                model: tl.endFrame
-                Layout.preferredHeight: zoomHeightSlider.value
-                Layout.fillWidth: true
-                orientation: ListView.Horizontal
-                boundsBehavior: Flickable.StopAtBounds
+                key: 0
+                timeline: tl
+                model: keyframes
                 delegate: keyframeDelegate
+                Layout.preferredHeight: timeLineHeight
             }
-            ListView {
+            KeyframeListView {
                 id: tl2
-                property int key: 1
-                model: tl.endFrame
-                Layout.preferredHeight: zoomHeightSlider.value
-                Layout.fillWidth: true
-                orientation: ListView.Horizontal
-                boundsBehavior: Flickable.StopAtBounds
+                key: 1
+                timeline: tl
+                model: keyframes
                 delegate: keyframeDelegate
+                Layout.preferredHeight: timeLineHeight
             }
-            ListView {
+            KeyframeListView {
                 id: tl3
-                property int key: 2
-                model: tl.endFrame
-                Layout.preferredHeight: zoomHeightSlider.value
-                Layout.fillWidth: true
-                orientation: ListView.Horizontal
-                boundsBehavior: Flickable.StopAtBounds                
+                key: 2
+                timeline: tl
+                model: keyframes
                 delegate: keyframeDelegate
+                Layout.preferredHeight: timeLineHeight
             }
         }
     }

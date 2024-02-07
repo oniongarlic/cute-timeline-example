@@ -18,9 +18,13 @@ Rectangle {
     function hasKeyframe(i) {
         let k=keyframes[i]
         if (k==null) {
-            console.debug("Keyframe data missing ?")
+            console.debug("Keyframe data missing ?", i, k)
             return false;
         }
+        if (i==0) {
+            console.debug("First", k, k[key])
+        }
+
         if (k[key]==null)
             return false;
 
