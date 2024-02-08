@@ -8,6 +8,7 @@ Rectangle {
     property int pos: 1
     property Timeline tl;
     property int timeLineHeight: 16
+    property int timeLineWidth: 20
     property int keyframes: 0
     
     color: "black"
@@ -44,7 +45,7 @@ Rectangle {
 
         ColumnLayout {
             id: cl
-            width: tl.endFrame*20
+            width: tl.endFrame*timeLineWidth
             height: 2+10+1+(4*zoomHeightSlider.value)+32
             spacing: 1
             Rectangle {
@@ -116,6 +117,7 @@ Rectangle {
         id: keyframeDelegate
         KeyframeDelegate {
             key: ListView.view.key
+            width: timeLineWidth
             keyframes: tl.index
             onKeyframe: keyframeClicked(key, keyframe)
         }
@@ -128,7 +130,7 @@ Rectangle {
             border.color: "grey"
             border.width: 1
             color: tl.currentFrameFixed==modelData ? "green" : "white"
-            width: 20
+            width: timeLineWidth
             height: 12
             Label {
                 text: modelData

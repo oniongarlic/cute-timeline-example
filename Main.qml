@@ -29,6 +29,14 @@ ApplicationWindow {
                 wheelEnabled: true
             }
             Slider {
+                id: zoomWidthSlider
+                from: 1
+                to: 10
+                value: 4
+                stepSize: 1
+                wheelEnabled: true
+            }
+            Slider {
                 id: timeLineFrame
                 from: 0
                 to: tl.endFrame
@@ -210,6 +218,7 @@ ApplicationWindow {
             Layout.fillHeight: false
             
             timeLineHeight: zoomHeightSlider.value
+            timeLineWidth: 10+zoomWidthSlider.value*2
 
             onKeyframeClicked: {
                 //kf.text=cu
