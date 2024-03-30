@@ -46,6 +46,7 @@ ApplicationWindow {
             }
             ToolButton {
                 text: "Play"
+                enabled: !ssAnimation.running
                 onClicked: {
                     ssAnimation.start()
                 }
@@ -58,7 +59,6 @@ ApplicationWindow {
                 text: "Clear"
                 onClicked: {
                     tl.clear()
-
                 }
             }
             ToolButton {
