@@ -1,14 +1,12 @@
 import QtQuick
 import QtQuick.Timeline
- import QtQuick.Controls
+import QtQuick.Controls
 
 Rectangle {
     id: keyframeDelegate
     border.color: "grey"
     border.width: 1
     color: hasKeyframe(modelData) ? "white" : "darkgrey"
-    width: 20
-    height: zoomHeightSlider.value
 
     property var keyframes: []
     property int key;

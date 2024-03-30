@@ -7,6 +7,7 @@ ListView {
     
     required property int key;
     required property Timeline timeline;
+    property string headerText: "-";
     
     Layout.fillWidth: true
     

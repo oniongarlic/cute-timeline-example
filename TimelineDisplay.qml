@@ -10,6 +10,8 @@ Rectangle {
     property int timeLineHeight: 16
     property int timeLineWidth: 20
     property int keyframes: 0
+
+    property int currentFrame: 0
     
     color: "black"
 
@@ -56,12 +58,15 @@ Rectangle {
             ListView {
                 id: tlFrame
                 model: tl.endFrame
-                Layout.preferredHeight: 10
+                Layout.preferredHeight: timeLineHeight
                 Layout.fillWidth: true
                 orientation: ListView.Horizontal
                 boundsBehavior: Flickable.StopAtBounds
                 //interactive: false
                 delegate: keyframeLabel
+                header: timelineHeader
+                headerPositioning: ListView.OverlayHeader
+                property string headerText: "F"
                 // header: Rectangle {
                 //     height: 10
                 //     width: 20
@@ -84,6 +89,8 @@ Rectangle {
                 timeline: tl
                 model: keyframes
                 delegate: keyframeDelegate
+                header: timelineHeader
+                headerText: "X"
                 Layout.preferredHeight: timeLineHeight
             }
             KeyframeListView {
@@ -92,6 +99,8 @@ Rectangle {
                 timeline: tl
                 model: keyframes
                 delegate: keyframeDelegate
+                header: timelineHeader
+                headerText: "Y"
                 Layout.preferredHeight: timeLineHeight
             }
             KeyframeListView {
@@ -100,6 +109,8 @@ Rectangle {
                 timeline: tl
                 model: keyframes
                 delegate: keyframeDelegate
+                header: timelineHeader
+                headerText: "S"
                 Layout.preferredHeight: timeLineHeight
             }
         }
@@ -118,13 +129,25 @@ Rectangle {
         KeyframeDelegate {
             key: ListView.view.key
             width: timeLineWidth
+            height: timeLineHeight
             keyframes: tl.index
             onKeyframe: keyframeClicked(key, keyframe)
         }
     }
 
     function setPosition(pos) {
-        timeLine.pos = 1+pos*timeLineWidth
+        timeLine.pos = (1+pos)*timeLineWidth
+    }
+
+    Component {
+        id: timelineHeader
+        Label {
+            font.pixelSize: 10
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            width: timeLineWidth
+            text: ListView.view.headerText
+        }
     }
 
     Component {
@@ -135,7 +158,7 @@ Rectangle {
             border.width: 1
             color: tl.currentFrameFixed==modelData ? "green" : "white"
             width: timeLineWidth
-            height: 12
+            height: timeLineHeight
             Label {
                 text: modelData
                 font.pixelSize: 8
