@@ -123,6 +123,10 @@ Rectangle {
         }
     }
 
+    function setPosition(pos) {
+        timeLine.pos = 1+pos*timeLineWidth
+    }
+
     Component {
         id: keyframeLabel
         Rectangle {
@@ -139,9 +143,7 @@ Rectangle {
             }
             TapHandler {
                 onTapped: {
-                    //timeLine.pos = eventPoint.position.x
-                    timeLine.pos = 1+modelData*20
-                    //fkl.ListView.view.currentIndex=modelData
+                    setPosition(modelData);
                 }
                 onDoubleTapped: tl.currentFrame=modelData
             }
