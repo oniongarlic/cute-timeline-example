@@ -27,6 +27,10 @@ Rectangle {
         when: tl.isReady
     }
 
+    property KeyframeListView selectedTimeline;
+
+    onSelectedTimelineChanged: console.debug(selectedTimeline===tl2)
+
     Flickable {
         id: timeLineContainer
         boundsBehavior: Flickable.StopAtBounds
@@ -91,6 +95,7 @@ Rectangle {
                 delegate: keyframeDelegate
                 header: timelineHeader
                 headerText: "X"
+                selectedTimeline: timeLine.selectedTimeline===tl1
                 Layout.preferredHeight: timeLineHeight
             }
             KeyframeListView {
@@ -101,6 +106,7 @@ Rectangle {
                 delegate: keyframeDelegate
                 header: timelineHeader
                 headerText: "Y"
+                selectedTimeline: timeLine.selectedTimeline===tl2
                 Layout.preferredHeight: timeLineHeight
             }
             KeyframeListView {
@@ -111,10 +117,12 @@ Rectangle {
                 delegate: keyframeDelegate
                 header: timelineHeader
                 headerText: "S"
+                selectedTimeline: timeLine.selectedTimeline===tl3
                 Layout.preferredHeight: timeLineHeight
             }
         }
     }
+
     Rectangle {
         x: timeLine.pos - timeLineContainer.contentX
         y: 0
@@ -142,11 +150,18 @@ Rectangle {
     Component {
         id: timelineHeader
         Label {
+            id: tlh
             font.pixelSize: 10
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             width: timeLineWidth
             text: ListView.view.headerText
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    selectedTimeline=tlh.ListView.view
+                }
+            }
         }
     }
 

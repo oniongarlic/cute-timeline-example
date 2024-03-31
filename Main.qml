@@ -105,13 +105,19 @@ ApplicationWindow {
         property var index: []
         property bool isReady: false
         
-        function addKeyframe(kfg, frame, value) {
-            keyframeGroups[kfg].keyframes.push(kf)
+        function addKeyframe(kfg, f, v) {
+            keyframeGroups[kfg].keyframes.push(kfc.createObject(tl, { frame: f, value: v }))
+
+            // xxx
+            updateIndexes();
         }
         
         function addKeyframeToGroup(kg, f, v) {
             console.debug("Frame: "+f+" == "+v)
             kg.keyframes.push(kfc.createObject(tl, { frame: f, value: v }))
+
+            // xxx
+            updateIndexes();
         }
 
         function updateKeyframeIngroup(kg, f, v) {
@@ -213,6 +219,7 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 8
         TimelineDisplay {
+            id: tld
             tl: tl
             Layout.fillWidth: true
             Layout.fillHeight: false
@@ -220,9 +227,14 @@ ApplicationWindow {
             timeLineHeight: zoomHeightSlider.value
             timeLineWidth: 10+zoomWidthSlider.value*2
 
+            property int currentKey: -1;
+
             onKeyframeClicked: {
-                //kf.text=cu
-                a.text=keyframe.value
+                currentKey=key;
+                if (keyframe)
+                    a.text=keyframe.value
+                else
+                    a.text=''
             }
         }
         ColumnLayout {
@@ -231,25 +243,25 @@ ApplicationWindow {
             spacing: 2
             Label {
                 id: kf
-                text: "-"
+                text: tld.currentKey
                 Layout.preferredWidth: 40
             }
             TextInput {
                 id: a
-                Layout.preferredWidth: 50
-            }
-            TextInput {
-                id: b
-                Layout.preferredWidth: 50
-            }
-            TextInput {
-                id: c
-                Layout.preferredWidth: 50
+                Layout.preferredWidth: 80
+                font.pixelSize: 22
+                Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
+                    border.width: 1
+                    border.color: "black"
+                }
             }
             Button {
-                text: "Update"
+                text: "Set keyframe"
+                enabled: tld.currentKey>-1
                 onClicked: {
-
+                    tl.addKeyframe(tld.currentKey, tl.currentFrame, a.text);
                 }
             }
         }

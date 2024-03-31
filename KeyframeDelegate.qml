@@ -3,7 +3,7 @@ import QtQuick.Timeline
 import QtQuick.Controls
 
 Rectangle {
-    id: keyframeDelegate
+    id: kfd
     border.color: "grey"
     border.width: 1
     color: hasKeyframe(modelData) ? "white" : "darkgrey"
@@ -30,9 +30,15 @@ Rectangle {
     }
 
     Label {
-        anchors.centerIn: parent
-        visible: hasKeyframe(modelData) && parent.height>20
+        anchors.fill: parent
+        fontSizeMode: Text.VerticalFit
+        visible: hasKeyframe(modelData)
         text: visible ? keyframes[modelData][key].value : ''
+        elide: Text.ElideRight
+        font.pixelSize: 16
+        minimumPixelSize: 8
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
 
     TapHandler {
@@ -43,10 +49,12 @@ Rectangle {
                 console.debug("Keyframe data missing ?")
                 return;
             }
-            if (k[key]==null)
+            if (k[key]==null) {
+                keyframeClicked(key, null)
                 return;
+            }
 
-            console.debug("Keyframe Tap", k[key].frame, k[key].value)
+            console.debug("Keyframe Tap", key, k[key].frame, k[key].value)
             keyframeClicked(key, k[key])
         }
         onDoubleTapped: console.debug("taptap")
