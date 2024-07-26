@@ -12,6 +12,7 @@ Rectangle {
     property int key;
 
     signal keyframe(int key, Keyframe keyframe)
+    signal keyframeDouble(int key)
 
     function hasKeyframe(i) {
         let k=keyframes[i]
@@ -27,6 +28,10 @@ Rectangle {
             return false;
 
         return true
+    }
+
+    function getKeyframe(key) {
+        return keyframes[key];
     }
 
     Label {
@@ -57,7 +62,11 @@ Rectangle {
             console.debug("Keyframe Tap", key, k[key].frame, k[key].value)
             keyframeClicked(key, k[key])
         }
-        onDoubleTapped: console.debug("taptap")
+        onDoubleTapped: {
+            console.debug("taptap")
+            let k=keyframes[modelData]
+            keyframeDouble(key)
+        }
     }
 }
 
