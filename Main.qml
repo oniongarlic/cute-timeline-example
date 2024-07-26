@@ -164,7 +164,7 @@ ApplicationWindow {
         function updateIndex(kfg, i) {
             kfg.keyframes.forEach(e => {
                                        console.log("Element: " + e.frame+" = "+e.value )
-                                       index[e.frame][i]=e
+                                       index[e.frame][i]=e.value
                                    }
                                    )
         }
