@@ -37,7 +37,7 @@ Rectangle {
         }
     }
 
-    signal keyframeClicked(int key, Keyframe keyframe)
+    signal keyframeClicked(int key, variant keyframe)
     
     Component.onCompleted: {
         

@@ -34,8 +34,8 @@ Rectangle {
         return true
     }
 
-    function getKeyframe(key) {
-        return keyframes[key];
+    function getKeyframe(i) {
+        return keyframes[i];
     }
 
     Label {

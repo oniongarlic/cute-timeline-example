@@ -7,7 +7,7 @@ ApplicationWindow {
     width: 1024
     height: 480
     visible: true
-    title: qsTr("Timelines test")        
+    title: qsTr("Timelines test")
 
     footer: ToolBar {
         RowLayout {
@@ -115,6 +115,23 @@ ApplicationWindow {
             // xxx
             updateIndexes();
         }
+
+        function indexOfFrame(kfg, f) {
+            for (let i=0;i<keyframeGroups[kfg].keyframes.length;i++) {
+                if (keyframeGroups[kfg].keyframes[i].frame===f) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function clearKeyFrame(kfg, f) {
+            let idx=indexOfFrame(kfg, f)
+            if (idx>-1) {
+                keyframeGroups[kfg].keyframes.splice(idx, 1)
+            }
+            updateIndexes();
+        }
         
         function addKeyframeToGroup(kg, f, v) {
             console.debug("Frame: "+f+" == "+v)
@@ -143,7 +160,7 @@ ApplicationWindow {
                 Keyframe { frame: 20; value: 100 }
                 Keyframe { frame: 35; value: 200 }
                 Keyframe { frame: 48; value: 300 }
-                Keyframe { frame: 59; value: 320 }                
+                Keyframe { frame: 59; value: 320 }
             },
             KeyframeGroup {
                 id: kfg2
@@ -167,10 +184,10 @@ ApplicationWindow {
 
         function updateIndex(kfg, i) {
             kfg.keyframes.forEach(e => {
-                                       console.log("Element: " + e.frame+" = "+e.value )
-                                       index[e.frame][i]=e.value
-                                   }
-                                   )
+                                      console.log("Element: " + e.frame+" = "+e.value )
+                                      index[e.frame][i]=e.value
+                                  }
+                                  )
         }
 
         function prepareIndex() {
@@ -202,7 +219,7 @@ ApplicationWindow {
             updateIndexes();
         }
 
-        Component.onCompleted: {            
+        Component.onCompleted: {
             updateIndexes();
         }
 
@@ -225,6 +242,7 @@ ApplicationWindow {
 
     ColumnLayout {
         anchors.fill: parent
+        anchors.margins: 8
         spacing: 8
         TimelineDisplay {
             id: tld
@@ -238,12 +256,12 @@ ApplicationWindow {
             property int currentKey: -1;
 
             onKeyframeClicked: (key, keyframe) => {
-                currentKey=key;
-                if (keyframe)
-                    a.text=keyframe.value
-                else
-                    a.text=''
-            }
+                                   currentKey=key;
+                                   if (keyframe)
+                                    a.text=keyframe[key]
+                                   else
+                                    a.text=''
+                               }
         }
         ColumnLayout {
             Layout.fillWidth: true
@@ -258,6 +276,7 @@ ApplicationWindow {
                 id: a
                 Layout.preferredWidth: 80
                 font.pixelSize: 22
+                inputMethodHints: Qt.ImhDigitsOnly
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
@@ -265,11 +284,20 @@ ApplicationWindow {
                     border.color: "black"
                 }
             }
-            Button {
-                text: "Set keyframe"
-                enabled: tld.currentKey>-1
-                onClicked: {
-                    tl.addKeyframe(tld.currentKey, tl.currentFrame, a.text);
+            RowLayout {
+                Button {
+                    text: "Set"
+                    enabled: tld.currentKey>-1
+                    onClicked: {
+                        tl.addKeyframe(tld.currentKey, tl.currentFrame, a.text);
+                    }
+                }
+                Button {
+                    text: "Clear"
+                    enabled: tld.currentKey>-1
+                    onClicked: {
+                        tl.clearKeyFrame(tld.currentKey, tl.currentFrame);
+                    }
                 }
             }
         }
