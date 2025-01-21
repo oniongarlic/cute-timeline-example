@@ -272,29 +272,30 @@ ApplicationWindow {
                 text: tld.currentKey
                 Layout.preferredWidth: 40
             }
-            TextInput {
-                id: a
-                Layout.preferredWidth: 80
-                font.pixelSize: 22
-                inputMethodHints: Qt.ImhDigitsOnly
-                Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                    border.width: 1
-                    border.color: "black"
-                }
-            }
             RowLayout {
+                spacing: 4
+                enabled: tld.currentKey>-1
+                TextInput {
+                    id: a
+                    Layout.preferredWidth: 80
+                    font.pixelSize: 22
+                    inputMethodHints: Qt.ImhDigitsOnly
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: -2
+                        color: "transparent"
+                        border.width: 1
+                        border.color: "black"
+                    }
+                }
                 Button {
                     text: "Set"
-                    enabled: tld.currentKey>-1
                     onClicked: {
                         tl.addKeyframe(tld.currentKey, tl.currentFrame, a.text);
                     }
                 }
                 Button {
                     text: "Clear"
-                    enabled: tld.currentKey>-1
                     onClicked: {
                         tl.clearKeyFrame(tld.currentKey, tl.currentFrame);
                     }
