@@ -5,7 +5,7 @@ import QtQuick.Controls
 Rectangle {
     id: kfd
     border.color: selected ? "green" : "grey"
-    border.width: 1
+    border.width: selected ? 2 : 1
     color: hasKeyframe(modelData) ? "white" : "darkgrey"
 
     property var keyframes: []

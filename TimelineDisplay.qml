@@ -119,6 +119,7 @@ Rectangle {
                     required property int index
                     required property string modelData
                     id: kflv
+                    currentIndex: currentPosition
                     key: index
                     timeline: tl
                     model: keyframes
