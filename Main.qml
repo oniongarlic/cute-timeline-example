@@ -15,6 +15,10 @@ ApplicationWindow {
                 text: tl.currentFrameFixed
                 Layout.preferredWidth: 4*12
             }
+            Label {
+                text: tld.currentPosition
+            }
+
             CheckBox {
                 id: lvEnabled
                 text: "Enabled"
@@ -171,10 +175,14 @@ ApplicationWindow {
 
         function prepareIndex() {
             for (var i=0;i<endFrame;i++) {
-                index[i]=[];
-                index[i][0]=null;
-                index[i][1]=null;
-                index[i][2]=null;
+                prepareIndexValues(i, 3);
+            }
+        }
+
+        function prepareIndexValues(i, ks) {
+            index[i]=[];
+            for (var k=0;k<ks;k++) {
+                index[i][k]=null;
             }
         }
 
@@ -229,7 +237,7 @@ ApplicationWindow {
 
             property int currentKey: -1;
 
-            onKeyframeClicked: {
+            onKeyframeClicked: (key, keyframe) => {
                 currentKey=key;
                 if (keyframe)
                     a.text=keyframe.value

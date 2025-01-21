@@ -4,28 +4,32 @@ import QtQuick.Controls
 
 Rectangle {
     id: kfd
-    border.color: "grey"
+    border.color: selected ? "green" : "grey"
     border.width: 1
     color: hasKeyframe(modelData) ? "white" : "darkgrey"
 
     property var keyframes: []
     property int key;
+    property bool selected: false
 
-    signal keyframe(int key, Keyframe keyframe)
-    signal keyframeDouble(int key)
+    signal keyframeClicked(int key, int frame, variant keyframe)
+    signal keyframeDouble(int key, int frame, variant keyframe)
 
     function hasKeyframe(i) {
         let k=keyframes[i]
         if (k==null) {
-            console.debug("Keyframe data missing ?", i, k)
+            console.debug("Keyframe data missing @", i)
             return false;
         }
         if (i==0) {
             console.debug("First", k, k[key])
         }
 
-        if (k[key]==null)
+        if (k[key]==null) {
             return false;
+        }
+
+        console.debug(i, k, k[key])
 
         return true
     }
@@ -47,25 +51,20 @@ Rectangle {
     }
 
     TapHandler {
-        onSingleTapped: {
-            console.debug(modelData)
-            let k=keyframes[modelData]
-            if (k==null) {
-                console.debug("Keyframe data missing ?")
-                return;
-            }
-            if (k[key]==null) {
-                keyframeClicked(key, null)
-                return;
-            }
-
-            console.debug("Keyframe Tap", key, k[key].frame, k[key].value)
-            keyframeClicked(key, k[key])
+        onSingleTapped: (event, button) => {
+            console.debug("MD", modelData)
+            if (hasKeyframe(modelData)) {
+                                let k=keyframes[modelData]
+                                console.debug("Keyframe@", modelData, key, k, k[key])
+                                keyframeClicked(key, modelData, k)
+                            } else {
+                                keyframeClicked(key, modelData, null)
+                            }
         }
         onDoubleTapped: {
             console.debug("taptap")
             let k=keyframes[modelData]
-            keyframeDouble(key)
+            keyframeDouble(key, modelData, k)
         }
     }
 }

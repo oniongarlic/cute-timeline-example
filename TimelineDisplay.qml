@@ -3,17 +3,39 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Timeline
 
+import Qt.labs.animation
+
 Rectangle {
     id: timeLine
-    property int pos: 1
+    property int pos: (1+currentPosition)*timeLineWidth
     property Timeline tl;
     property int timeLineHeight: 16
     property int timeLineWidth: 20
     property int keyframes: 0
 
     property int currentFrame: 0
+
+    property int currentPosition: 0
     
+    BoundaryRule on currentPosition {
+        minimum: 0
+        maximum: keyframes
+
+    }
+
     color: "black"
+
+    onPosChanged: {
+        console.debug(pos, timeLineContainer.contentX)
+        if (pos>timeLineContainer.contentX+timeLineContainer.width/2) {
+            console.debug("MF")
+            timeLineContainer.contentX=pos-timeLineContainer.width/4
+        } else if (pos<timeLineContainer.contentX) {
+            console.debug("MB")
+            let tp=pos-timeLineContainer.width/4;
+            timeLineContainer.contentX=tp>0 ? tp : 0;
+        }
+    }
 
     signal keyframeClicked(int key, Keyframe keyframe)
     
@@ -46,12 +68,16 @@ Rectangle {
         clip: true
         WheelHandler {
             //onWheel: (event)=> console.log("rotation", event.angleDelta.y, "scaled", rotation, "@", point.position,"=>", parent.rotation)
-            onWheel: (event)=>{timeLineContainer.flick(event.angleDelta.y*event.y, 0)}
+            onWheel: (event)=>{
+                         console.log("rotation", event.angleDelta.y, "scaled", rotation, "@", point.position,"=>", parent.rotation)
+                         currentPosition+=event.angleDelta.y>0 ? 1 : -1
+                         //timeLineContainer.flick(event.angleDelta.y*event.y, 0)
+                     }
         }
 
         ColumnLayout {
             id: cl
-            width: tl.endFrame*timeLineWidth
+            width: tl.endFrame*timeLineWidth+64
             height: 2+10+1+(4*zoomHeightSlider.value)+32
             spacing: 1
             Rectangle {
@@ -87,43 +113,61 @@ Rectangle {
                 height: 1
                 color: "blue"
             }
-            KeyframeListView {
-                id: tl1
-                key: 0
-                timeline: tl
-                model: keyframes
-                delegate: keyframeDelegate
-                header: timelineHeader
-                headerText: "X"
-                selectedTimeline: timeLine.selectedTimeline===tl1
-                Layout.preferredHeight: timeLineHeight
+            Repeater {
+                model: [ "RX", "RY", "RS" ]
+                KeyframeListView {
+                    required property int index
+                    required property string modelData
+                    id: kflv
+                    key: index
+                    timeline: tl
+                    model: keyframes
+                    delegate: keyframeDelegate
+                    header: timelineHeader
+                    headerText: modelData
+                    selectedTimeline: timeLine.selectedTimeline===kflv
+                    Layout.preferredHeight: timeLineHeight
+                }
             }
-            KeyframeListView {
-                id: tl2
-                key: 1
-                timeline: tl
-                model: keyframes
-                delegate: keyframeDelegate
-                header: timelineHeader
-                headerText: "Y"
-                selectedTimeline: timeLine.selectedTimeline===tl2
-                Layout.preferredHeight: timeLineHeight
-            }
-            KeyframeListView {
-                id: tl3
-                key: 2
-                timeline: tl
-                model: keyframes
-                delegate: keyframeDelegate
-                header: timelineHeader
-                headerText: "S"
-                selectedTimeline: timeLine.selectedTimeline===tl3
-                Layout.preferredHeight: timeLineHeight
-            }
+
+            // KeyframeListView {
+            //     id: tl1
+            //     key: 0
+            //     timeline: tl
+            //     model: keyframes
+            //     delegate: keyframeDelegate
+            //     header: timelineHeader
+            //     headerText: "X"
+            //     selectedTimeline: timeLine.selectedTimeline===tl1
+            //     Layout.preferredHeight: timeLineHeight
+            // }
+            // KeyframeListView {
+            //     id: tl2
+            //     key: 1
+            //     timeline: tl
+            //     model: keyframes
+            //     delegate: keyframeDelegate
+            //     header: timelineHeader
+            //     headerText: "Y"
+            //     selectedTimeline: timeLine.selectedTimeline===tl2
+            //     Layout.preferredHeight: timeLineHeight
+            // }
+            // KeyframeListView {
+            //     id: tl3
+            //     key: 2
+            //     timeline: tl
+            //     model: keyframes
+            //     delegate: keyframeDelegate
+            //     header: timelineHeader
+            //     headerText: "S"
+            //     selectedTimeline: timeLine.selectedTimeline===tl3
+            //     Layout.preferredHeight: timeLineHeight
+            // }
         }
     }
 
     Rectangle {
+        id: frameCursor
         x: timeLine.pos - timeLineContainer.contentX
         y: 0
         width: 3
@@ -139,12 +183,9 @@ Rectangle {
             width: timeLineWidth
             height: timeLineHeight
             keyframes: tl.index
-            onKeyframe: keyframeClicked(key, keyframe)
+            onKeyframeClicked: timeLine.keyframeClicked(key, keyframe)
+            selected: ListView.view.currentIndex==index
         }
-    }
-
-    function setPosition(pos) {
-        timeLine.pos = (1+pos)*timeLineWidth
     }
 
     Component {
@@ -181,7 +222,7 @@ Rectangle {
             }
             TapHandler {
                 onTapped: {
-                    setPosition(modelData);
+                    timeLine.currentPosition=modelData
                 }
                 onDoubleTapped: tl.currentFrame=modelData
             }
